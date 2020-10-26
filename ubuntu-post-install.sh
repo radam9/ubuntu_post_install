@@ -34,7 +34,7 @@ echo_message welcome "Ubuntu Post-Install Script"
 
 system_checks
 # purge unwanted apps
-# `purge_apts` after `purge_snaps` to not remove `snapd` before removing snap packages.
+# `purge_apts` after `purge_snaps` to not remove `snapd` before removing snap packages. (if snapd is included in `purge_apts`).
 purge_snaps
 purge_apts
 # remove orphan packages, remove leftovers and clean apt cache
