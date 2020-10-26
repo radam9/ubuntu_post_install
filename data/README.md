@@ -5,9 +5,7 @@ These lists are referred to in functions throughout this set of scripts and serv
 
 Their contents are user-generated and should be updated or changed in forked versions to reflect the preferences of the fork's author.
 
-- You can remove `flatpak` from `dependencies.list` if your `apps_flatpak` list is empty.
-
-- You can remove `snapd` from `dependencies.list` if your `apps_snap` and `purge_snap` lists are empty.
+- You should add `flatpak` and `snapd` to `apps_apt.list` if you are going to populate and use the `apps_snap.list` and `purge_snap.list` lists.
 
 Any line that starts with a `#` will be ignored during the installation proccess.
 
@@ -19,7 +17,7 @@ Any line that starts with a `#` will be ignored during the installation proccess
 | dependencies     | List containing the dependencies this script needs to run successfully. |
 | fonts            | List containing the fonts to be installed using `apt`.                  |
 | gsettings_apps   | List containing the application settings.                               |
-| gsettings_ubuntu | List containing the system (ubuntu specific) settings.                  |
+| gsettings_ubuntu | List containing the system (distro specific) settings.                  |
 | purge_apt        | List containing the `apt` applications to be purged.                    |
 | purge_snap       | List containing the `snap` applications to be purged.                   |
 | repos_apt        | List containing the `apt` repositories.                                 |
