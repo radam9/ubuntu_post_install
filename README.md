@@ -20,7 +20,7 @@ This project is designed to be fairly modular (and not be one huge script) so yo
 
 ## Adding Functions
 
-Adding additional functions is as easy as editing one of the many already included functions and simply changing the variables. Read the two README files ([README](/data/README.md) - [README](/functions/README.md))in the [`data`](/data) and [`functions`](/functions) folders respectively for further details.
+Adding additional functions is as easy as editing one of the many already included functions and simply changing the variables. Read the two README files ([README](/data/README.md) - [README](/functions/README.md)) in the [`data`](/data) and [`functions`](/functions) folders respectively for further details.
 
 ## Usage
 
