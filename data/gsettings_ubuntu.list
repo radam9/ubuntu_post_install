@@ -1,0 +1,16 @@
+org.gnome.desktop.background color-shading-type 'solid'
+org.gnome.desktop.background picture-options 'scaled'
+org.gnome.desktop.background primary-color '#000000000000'
+org.gnome.desktop.background secondary-color '#000000000000'
+org.gnome.desktop.background show-desktop-icons true
+org.gnome.desktop.screensaver picture-options 'scaled'
+org.gnome.desktop.interface clock-format '24h'
+org.gnome.desktop.interface clock-show-date true
+org.gnome.desktop.interface clock-show-seconds false
+org.gnome.desktop.interface clock-show-weekday false
+org.gnome.desktop.interface enable-animations false
+org.gnome.desktop.interface enable-hot-corners false
+org.gnome.desktop.interface document-font-name 'Roboto Slab 12'
+org.gnome.desktop.interface font-name 'Fira Sans Semi-Light 12'
+org.gnome.desktop.interface monospace-font-name 'Fira Mono 14'
+org.gnome.desktop.interface gtk-im-module 'gtk-im-context-simple'

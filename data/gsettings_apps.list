@@ -1,0 +1,13 @@
+org.gnome.gedit.preferences.editor highlight-current-line false
+org.gnome.gedit.preferences.editor tabs-size 4
+org.gnome.gedit.preferences.editor use-default-font false
+org.gnome.gedit.preferences.editor wrap-last-split-mode 'word'
+org.gnome.gedit.preferences.editor wrap-mode 'word'
+org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
+org.gnome.nautilus.preferences search-filter-time-type 'last_modified'
+org.gnome.nautilus.preferences search-view 'list-view'
+org.gnome.nautilus.preferences show-hidden-files true
+org.gtk.Settings.FileChooser date-format 'regular'
+org.gtk.Settings.FileChooser location-mode 'path-bar'
+org.gtk.Settings.FileChooser show-hidden true
+org.gtk.Settings.FileChooser show-size-column true

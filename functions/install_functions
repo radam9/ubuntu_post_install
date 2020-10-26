@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# Install from list function
+#
+# ${1} = Name
+# ${2} = list-name
+install_from_list() {
+	# echo_message header "Starting 'install_from_list' function..."
+	echo_message title "Starting installation of ${1}..."
+	list="${data_dir}/${2}.list"
+	while read package || [[ -n $package ]]; do
+		# skip commented lines.
+		[[ $package = \#* ]] && continue
+		# If package is not installed
+		if [ $(check_package_installed $package) != 0 ]; then
+			echo_message info "Installing '$package'..."
+			sudo apt install -y $package
+			if [[ $? != 0 ]]; then
+				echo_message error "Error installing '$package'."
+			else
+				echo_message success "'$package' installed successfully."
+			fi
+		else
+			echo_message info "Package '$package' already exists."
+		fi
+	done < "$list"
+	echo_message success "Installation of ${1} complete."
+}
+
+# Install flatpak package
+#
+# ${1} = remote
+# ${2} = com.package.Name
+install_flatpak_package() {
+	# echo_message header "Starting 'install_flatpak_package' function..."
+	# If package is not installed
+	if [[ $(flatpak list | grep ${2} &> /dev/null; echo $?) != 0 ]]; then
+		echo_message info "Installing flatpak '${2}'..."
+		flatpak install -y ${1} ${2}
+		echo_message success "'${2}' installed successfully."
+	else
+		echo_message info "Flatpak '${2}' already exists."
+	fi
+}
+
+# install app from flathub repository
+#
+# ${1} = https://remote.example.com/
+install_flathub_app() {
+	echo_message header "Starting 'install_flathub_app' function..."
+	# check if flathub repo is added
+	check_flatpak_repo "flathub" "https://flathub.org/repo/flathub.flatpakrepo"
+	#install_flatpak_package "remote" "com.package.Name"
+	install_flatpak_package "flathub" ${1}
+}
+
+# Install Flatpak Applications
+install_flatpak_apps() {
+	# install
+	name="Flatpak Applications"
+	echo_message title "Starting installation of ${name,,}..."
+	list="${data_dir}/apps_flatpak.list"
+	while read package || [[ -n $package ]]; do
+		# skip commented lines.
+		[[ $package = \#* ]] && continue
+		install_flathub_app $package
+	done < "$list"
+}
+
+# Install snap package
+#
+# ${1} = package
+install_snap_package() {
+	# echo_message header "Starting 'install_snap_package' function..."
+	# If package is not installed
+	if [[ $(snap list | grep ${1} &> /dev/null; echo $?) != 0 ]]; then
+		echo_message info "Installing snap package '${1}'..."
+		sudo snap install ${1}
+		echo_message success "'${1}' installed successfully."
+	else
+		echo_message info "Snap package '${1}' already exists."
+	fi
+}
+
+# Install Snap Applications
+install_snap_apps() {
+	name="Snap Applications"
+	echo_message title "Starting installation of ${name,,}..."
+    list="${data_dir}/apps_snap.list"
+	while read package || [[ -n $package ]]; do
+		# skip commented lines.
+		[[ $package = \#* ]] && continue
+		install_snap_package $package
+	done <"$list"
+}
+
+# Automatically set preferred gsettings keys as outlined in the 'gsettings_*.list' file
+# 'gsettings' can be obtained by executing "dconf watch /" and then manually changing settings
+#
+# ${1} = list-name
+gsettings_config() {
+	echo_message info "Setting preferred application-specific & desktop settings..."
+	list="${data_dir}/${1}.list"
+	while IFS= read line || [[ -n $line ]]; do
+		[[ $line = \#* ]] && continue
+		read path key value <<< $line
+		gsettings set $path $key "$value"
+	done < "$list"
+	echo_message success "Settings changed successfully."
+}
+
+# Install Fonts
+#
+# Function to install downloaded font files located in the `/data/fonts/` directory.
+install_fonts() {
+	name="Fonts"
+	echo_message title "Starting ${name,,}..."
+
+	font_dir="${data_dir}/fonts"
+	font_install_path="$HOME/.local/share/fonts/"
+
+	if [ ! -d $font_dir ]; then
+		echo_message error "$font_dir directory doesn't exist."
+	elif [ `ls -1 $font_dir/*.{ttf,otf} 2>/dev/null | wc -l` == 0 ]; then
+		echo_message error "No fonts were found in $font_dir"
+	else
+		shopt -s nullglob # Sets nullglob - ignore .ttf or .otf if no files exist with the given extension
+		shopt -s nocaseglob # Sets nocaseglob - case insensitive for extensions.
+		mkdir -pv "$font_install_path"
+		for font in $font_dir/*.{ttf,otf}; do
+			fontname=$(basename "$font")
+        	echo_message info "Installing $fontname ..."
+        	cp -v "$font" "$font_install_path"
+			if [ `fc-list | grep "$fontname" | wc -l` == 1 ]; then
+				echo_message success "$fontname was installed successfully."
+			else
+				echo_message warning "$fontname was not installed."
+			fi
+		done
+		shopt -u nocaseglob # Unsets nocaseglob
+		shopt -u nullglob # Unsets nullglob
+		echo_message info "Clearing and regenerating the font cache..."
+		fc-cache -f
+	fi
+	echo_message info "${name,,} installation complete."
+}

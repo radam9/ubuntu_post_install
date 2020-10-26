@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+# Update the list of packages in 'data/purge.list' to suit your preferences
+# Listed packages that are are not any system-crucial software to avoid breakage
+
+# Remove pre-installed apps
+purge_apts() {
+	name="Unused Pre-installed Applications"
+	echo_message title "Removing ${name,,}..."
+	# Check list
+	list="${data_dir}/purge_apt.list"
+	while read package || [[ -n $package ]]; do
+		# skip commented lines.
+		[[ $package = \#* ]] && continue
+		# If package is not installed
+		if [ $(check_package_installed $package) != 0 ]; then
+			echo_message info "Package '$package' is not installed."
+		else
+			echo_message info "'$package' is installed. Removing..."
+			sudo apt purge -y $package
+			if [ $? = 0 ]; then
+				echo_message success "'$package' removed successfully."
+			else
+				echo_message error "An error occurred, couldn't remove '$package'"
+			fi
+		fi
+	done < "$list"
+	echo_message success "Removal of ${name,,} complete."
+}
+# Remove pre-installed apps
+purge_snaps() {
+	name="Unused Pre-installed Snaps"
+	echo_message title "Removing ${name,,}..."
+	# Check list
+	list="${data_dir}/purge_snaps.list"
+	# Remove loop
+	while read package || [[ -n $package ]]; do
+		[[ $package = \#* ]] && continue
+		# If package is not installed
+		if [[ $(snap list | grep $package &> /dev/null; echo $?) != 0 ]]; then
+			echo_message info "snap '$package' already removed."
+		else
+			echo_message info "snap '$package' is installed. Removing..."
+			sudo snap remove $package
+			echo_message success "'$package' removed successfully."
+		fi
+	done < "$list"
+	echo_message success "Removal of ${name,,} complete."
+}
+
+# Remove Orphaned Packages
+remove_orphans() {
+	echo_message info "Removing orphaned packages..."
+	sudo apt --purge autoremove -y
+	echo_message success "Removal of orphaned packages complete."
+}
+
+# Remove Leftover Config files
+remove_leftovers() {
+	echo_message info "Removing leftover configuration files..."
+	sudo "dpkg --purge $(COLUMNS=200 dpkg -l | grep '^rc' | tr -s ' ' | cut -d ' ' -f 2)"
+	echo_message success "Removal of leftover configuration files complete."
+}
+
+# Clean packages cache
+clean_apt_cache() {
+	echo_message info "Cleaning package cache..."
+	sudo apt autoclean
+	sudo apt clean
+	echo_message success "Package cache cleaned."
+}
+
+# Cleanup System
+system_cleanup() {
+	name="System Cleanup"
+	echo_message title "Starting ${name,,}..."
+	functions=(remove_orphans remove_leftovers clean_apt_cache)
+	for function in ${functions[@]}; do
+		echo_message header "Starting $function function"
+		$function
+	done
+}

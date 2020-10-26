@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Fancy colorful echo messages
+echo_message() {
+	local color=$1;
+	local message=$2;
+	if ! [[ $color =~ '^[0-9]$' ]] ; then
+		case $(echo -e $color | tr '[:upper:]' '[:lower:]') in
+			# black
+			header) color=0 ;;
+			# red
+			error) color=1 ;;
+			# green
+			success) color=2 ;;
+			# yellow
+			welcome) color=11 ;;
+			# purple
+			title) color=5 ;;
+			# blue
+			info) color=4 ;;
+			# cyan
+			question) color=6 ;;
+			# orange
+			warning) color=3 ;;
+			# white
+			*) color=7 ;;
+		esac
+	fi
+	tput setaf $color;
+	echo '-- '$message;
+	tput sgr0;
+}

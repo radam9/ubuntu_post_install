@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# post app install functions
+# run any functions that need to be executed after installing the lists.
+
+function post_app_install_functions() {
+    echo_message info "Setting zsh as default shell..."
+    sudo chsh -s $(which zsh)
+}

@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Add Apt Repo
+#
+# ${1} = list-name (derived from package-name)
+# ${2} = https://key.example.com/signing-key-pub.gpg
+# ${3} = "deb https://repo.example.com/linux apt/repo"
+add_apt_repo() {
+	echo_message header "Starting 'add_apt_repo' function"
+	# Check if already added
+	if ! grep -q "${3@E}" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+		echo_message info "Adding '${1}' package repository signing key to keyring..."
+		sudo apt-key adv --fetch-keys ${2}
+		echo_message info "Adding '${1}' apt repository to 'sources.list.d'..."
+		echo_message warning "add-apt-repository -y ${3}"
+		sudo add-apt-repository -y "${3@E}"
+		echo_message success "Repository added."
+	else
+		echo_message info "${1} repository already exists."
+	fi
+}
+
+# Add Flatpak Repo
+#
+# ${1} = remote
+# ${2} = https://remote.example.com/
+add_flatpak_repo() {
+	echo_message header "Starting 'add_flatpak_repo' function"
+	# Check if already added
+	flatpak remotes | grep ${1} &> /dev/null
+	if [ $? = 0 ]; then
+		echo_message info "Repository already exists."
+	else
+		echo_message info "Adding flatpak repository..."
+		flatpak remote-add --if-not-exists ${1} ${2}
+		echo_message success "Repository added."
+	fi
+}
+
+# Add Launchpad PPA
+#
+# ${1} = Name 
+# ${2} = launchpad-user/ppa-name
+add_launchpad_ppa() {
+	echo_message header "Starting 'add_launchpad_ppa' function"
+	# Check if PPA already added
+	if ! grep -q "^deb .*${2}" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+		echo_message info "Adding ${1} PPA repository..."
+		sudo add-apt-repository -y "ppa:${2}"
+		echo_message success "Repository added."
+	else
+		echo_message info "${1} PPA repository already exists."
+	fi
+}
+
+
+# Install apt repositories from `repos_apt.list` file.
+install_apt_repos() {
+	name="APT Repositories"
+	echo_message title "Starting installation of ${name,,}..."
+	list="${data_dir}/repos_apt.list"
+	while read line || [[ -n "$line" ]]; do
+		# skip commented lines.
+		[[ $line = \#* ]] && continue
+		IFS='|' read package key repo <<< $line
+		add_apt_repo "$package" "$key" "${repo@E}"
+	done <"$list"
+}
+
+# Install ppa repositories from `repos_ppa.list` file.
+install_ppa_repos() {
+	name="PPA Repositories"
+	echo_message title "Starting installation of ${name,,}..."
+	list="${data_dir}/repos_ppa.list"
+	while read line || [[ -n $line ]]; do
+		# skip commented lines.
+		[[ $line = \#* ]] && continue
+		IFS="|" read package ppa <<< $line
+		add_launchpad_ppa $package $ppa
+	done < "$list"
+}
