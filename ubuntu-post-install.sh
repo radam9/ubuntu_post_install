@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# setup variables => data_folder
+# setup variables
 base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 data_dir="${base_dir}/data"
 scripts_dir="${data_dir}/scripts"
@@ -42,10 +42,6 @@ system_cleanup
 # add repos APT/PPA
 install_apt_repos
 install_ppa_repos
-# refreshing the repository information is not needed since `add-apt-repository`
-# automatically updates the cache if not provided the `-k` option. (26/10/2020)
-# echo_message info "Refreshing repository information..."
-# sudo apt update -y
 # install applications
 install_from_list "APT Application" "apps_apt"
 install_flatpak_apps
