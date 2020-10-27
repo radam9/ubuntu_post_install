@@ -28,6 +28,6 @@ First modify the content (lists/scripts/fonts) of the [`data`](/data) folder to 
 
 Then to use these scripts, you can just run the main script from the root of the source folder:
 
-    ./ubuntu-post-install-script.sh
+    ./ubuntu_post_install.sh
 
 **NOTE:** *Do not run the script using `sudo` as some functions like `gsettings` don't function properly when executed using `sudo`, the script will envoke `sudo` when needed.*
