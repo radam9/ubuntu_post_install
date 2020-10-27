@@ -17,7 +17,7 @@ Any line that starts with a `#` will be ignored during the installation proccess
 | dependencies     | List containing the dependencies this script needs to run successfully. |
 | fonts            | List containing the fonts to be installed using `apt`.                  |
 | gsettings_apps   | List containing the application settings.                               |
-| gsettings_ubuntu | List containing the system (distro specific) settings.                  |
+| gsettings_system | List containing the system (distro specific) settings.                  |
 | purge_apt        | List containing the `apt` applications to be purged.                    |
 | purge_snap       | List containing the `snap` applications to be purged.                   |
 | repos_apt        | List containing the `apt` repositories.                                 |

@@ -55,6 +55,6 @@ install_from_list "Fonts" "fonts"
 install_fonts
 # gsettings [apps, ubuntu]
 gsettings_config "gsettings_apps"
-gsettings_config "gsettings_ubuntu"
+gsettings_config "gsettings_system"
 # clean up after all installations.
 system_cleanup
