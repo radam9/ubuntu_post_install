@@ -5,5 +5,5 @@
 
 function post_app_install_functions() {
     echo_message info "Setting zsh as default shell..."
-    sudo chsh -s $(which zsh)
+    chsh -s $(which zsh)
 }
